@@ -25,6 +25,14 @@ class NewTransactionState extends State<NewTransaction>{
   NewTransactionState(MyApp app){
     this._MyApp = app;
   }
+  void _subMitData(){
+    if(titleController.text.isEmpty || aMountController.text.isEmpty || dateTime == null){
+      return;
+    }
+    _MyApp.addNewTransaction(titleController.text, double.parse(aMountController.text), dateTime!);
+    Navigator.of(context).pop();
+
+  }
   @override
   Widget build(BuildContext context) {
     return
@@ -40,8 +48,8 @@ class NewTransactionState extends State<NewTransaction>{
                     labelText: "Title",
                   ),
                   controller: titleController,
-                  onSubmitted: (_){_MyApp.addNewTransaction(titleController.text, double.parse(aMountController.text));
-                    Navigator.of(context).pop();
+                  onSubmitted: (_){
+                    _subMitData();
                   },
                 ),
                 TextField(
@@ -51,8 +59,7 @@ class NewTransactionState extends State<NewTransaction>{
                   controller: aMountController,
                   keyboardType: TextInputType.number,
                   onSubmitted: (_){
-                    _MyApp.addNewTransaction(titleController.text, double.parse(aMountController.text));
-                    Navigator.of(context).pop();
+                    _subMitData();
                   },
                 ),
                 Container(
@@ -82,7 +89,7 @@ class NewTransactionState extends State<NewTransaction>{
                 )
                 ),
                 RaisedButton(onPressed: (){
-                  _MyApp.addNewTransaction(titleController.text, double.parse(aMountController.text));
+                  _MyApp.addNewTransaction(titleController.text, double.parse(aMountController.text), dateTime!);
                       Navigator.of(context).pop();
                   },color: Theme.of(context).primaryColor,
                     child: Text("Add transaction", style: TextStyle(

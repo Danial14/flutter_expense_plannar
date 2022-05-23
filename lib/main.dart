@@ -44,8 +44,8 @@ class MyApp extends StatefulWidget {
   State<StatefulWidget> createState() {
     return _MyAppState;
   }
-  void addNewTransaction(String txTitle, double txAmount){
-    _MyAppState.addNewTransaction(txTitle, txAmount);
+  void addNewTransaction(String txTitle, double txAmount, DateTime dateTime){
+    _MyAppState.addNewTransaction(txTitle, txAmount, dateTime);
   }
 }
 class MyAppState extends State<MyApp>{
@@ -58,11 +58,22 @@ class MyAppState extends State<MyApp>{
     Transaction(title: "Cloth", id: "tr02", amount: 1500, date: DateTime.now())*/
   ];
 
-  void addNewTransaction(String txTitle, double txAmount){
-    final newTx = Transaction(id: DateTime.now().toString(), title: txTitle, amount: txAmount, date: DateTime.now());
+  void addNewTransaction(String txTitle, double txAmount, DateTime dateTime){
+    final newTx = Transaction(id: DateTime.now().toString(), title: txTitle, amount: txAmount, date: dateTime);
     setState(() {
       transactions.add(newTx);
     });
+  }
+  void deleteNewTransaction(String id){
+    print("delete call");
+    setState(() {
+      transactions.removeWhere((tx){
+        print(id);
+        print(tx.id);
+        return tx.id == id;
+      });
+    });
+
   }
   void startAddNewTransaction(BuildContext ctx){
     showModalBottomSheet(context: ctx, builder: (_){
@@ -75,26 +86,26 @@ class MyAppState extends State<MyApp>{
   }
   @override
   Widget build(BuildContext cont) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Expense plannar"),
-          actions: <Widget>[
-            IconButton(onPressed: (){}, icon: Icon(Icons.add))
-          ],
+    final AppBar appBar = AppBar(
+      title: Text("Expense plannar"),
+      actions: <Widget>[
+        IconButton(onPressed: (){}, icon: Icon(Icons.add))
+      ],
 
-        ),
+    );
+    return Scaffold(
+        appBar: appBar,
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               Container(
-                width: double.infinity,
-                child : Card(
-                  color: Colors.blue,
-                  child: Text("Transaction"),
-                ),
+                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.4,
+              child: Chart(transactions),
               ),
-              Chart(transactions),
-              Usertransaction(transactions)
+              Container(
+                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.6,
+              child: Usertransaction(transactions, deleteNewTransaction)
+              )
             ],
           ),
         ),

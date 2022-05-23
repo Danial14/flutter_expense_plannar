@@ -4,15 +4,16 @@ import '../models/Transaction.dart';
 
 class Usertransaction extends StatelessWidget{
   late List<Transaction> transactions;
-
-  Usertransaction(List<Transaction> transactions){
+  late Function deleteTx;
+  Usertransaction(List<Transaction> transactions, Function deleteTx){
     this.transactions = transactions;
+    this.deleteTx = deleteTx;
   }
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        TransactionList(transactions: transactions,)
+        TransactionList(transactions: transactions, deleteTransaction: deleteTx,)
       ],
     );
   }
