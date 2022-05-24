@@ -2,11 +2,18 @@ import 'package:expense_planner/widgets/New_transaction.dart';
 import 'package:expense_planner/widgets/User_transaction.dart';
 import 'package:expense_planner/widgets/chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 
 import 'models/Transaction.dart';
 
 void main() {
+  /*WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(<DeviceOrientation>[
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+
+  ]);*/
   runApp(MyHomePage());
 }
 
@@ -50,6 +57,7 @@ class MyApp extends StatefulWidget {
 }
 class MyAppState extends State<MyApp>{
   late MyApp _MyApp;
+  bool _showChart = false;
   MyAppState(MyApp app){
     _MyApp = app;
   }
@@ -98,10 +106,22 @@ class MyAppState extends State<MyApp>{
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              Container(
-                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.4,
-              child: Chart(transactions),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text("Show chart"),
+                  Switch(value: _showChart, onChanged: (val){
+                    print("switch: ${val}");
+                    setState(() {
+                      _showChart = val;
+                    });
+                  })
+                ],
               ),
+              _showChart ? Container(
+                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
+              child: Chart(transactions),
+              ) :
               Container(
                 height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.6,
               child: Usertransaction(transactions, deleteNewTransaction)

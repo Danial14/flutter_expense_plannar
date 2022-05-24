@@ -11,10 +11,10 @@ class Usertransaction extends StatelessWidget{
   }
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Container(child:Column(
       children: <Widget>[
         TransactionList(transactions: transactions, deleteTransaction: deleteTx,)
       ],
-    );
+    ));
   }
 }
