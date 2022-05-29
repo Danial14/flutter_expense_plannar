@@ -40,8 +40,13 @@ class TransactionList extends StatelessWidget{
             )
 
           );
+<<<<<<< HEAD
     }) : LayoutBuilder(builder: (context, constraints){
       return Column(
+=======
+    }) : LayoutBuilder(builder: (ctx, constraints){
+      return Container(child: Column(
+>>>>>>> 48066d95b93aef17dce7d33b75463dc7a93f81a0
         children: <Widget>[
           Text("No transactions added yet"),
           SizedBox(
@@ -49,10 +54,17 @@ class TransactionList extends StatelessWidget{
           ),
           Container(
               height: constraints.maxHeight * 0.6,
+<<<<<<< HEAD
               child: Image.asset("assets/images/waiting.png")
           )
         ],
       );
+=======
+              child: Image.asset("assets/images/waiting.png", fit: BoxFit.cover,)
+          )
+        ],
+      ));
+>>>>>>> 48066d95b93aef17dce7d33b75463dc7a93f81a0
     });
   }
 }

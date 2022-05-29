@@ -15,9 +15,14 @@ class ChartBar extends StatelessWidget{
       return Column(
         children: <Widget>[
           Container(
+<<<<<<< HEAD
               height: constraints.maxHeight * 0.15,
               child: FittedBox(child: Text("\$${_spendAMount.toStringAsFixed(0)}",
               ),
+=======
+              height: constraints.maxHeight * 0.1,
+              child: FittedBox(child: Text("\$${_spendAMount.toStringAsFixed(0)}"),
+>>>>>>> 48066d95b93aef17dce7d33b75463dc7a93f81a0
               )),
           SizedBox(
             height: constraints.maxHeight * 0.05,
@@ -49,6 +54,7 @@ class ChartBar extends StatelessWidget{
           SizedBox(
             height: constraints.maxHeight * 0.05,
           ),
+<<<<<<< HEAD
           Container(
               height: constraints.maxHeight * 0.15,
               child: Text(
@@ -59,4 +65,15 @@ class ChartBar extends StatelessWidget{
       );
     });
   }
+=======
+          Container(child: FittedBox(child: Text(
+              _label.substring(0, 1)
+          )),
+          height: constraints.maxHeight * 0.15,
+          ),
+        ],
+      );
+
+    });  }
+>>>>>>> 48066d95b93aef17dce7d33b75463dc7a93f81a0
 }
