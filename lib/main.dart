@@ -2,18 +2,11 @@ import 'package:expense_planner/widgets/New_transaction.dart';
 import 'package:expense_planner/widgets/User_transaction.dart';
 import 'package:expense_planner/widgets/chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 
 import 'models/Transaction.dart';
 
 void main() {
-  /*WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations(<DeviceOrientation>[
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-
-  ]);*/
   runApp(MyHomePage());
 }
 
@@ -57,11 +50,7 @@ class MyApp extends StatefulWidget {
 }
 class MyAppState extends State<MyApp>{
   late MyApp _MyApp;
-<<<<<<< HEAD
   bool _showState = false;
-=======
-  bool _showChart = false;
->>>>>>> 48066d95b93aef17dce7d33b75463dc7a93f81a0
   MyAppState(MyApp app){
     _MyApp = app;
   }
@@ -115,7 +104,6 @@ class MyAppState extends State<MyApp>{
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-<<<<<<< HEAD
               if(isLandescape) Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -123,21 +111,10 @@ class MyAppState extends State<MyApp>{
                   Switch(value: _showState, onChanged: (val){
                     setState(() {
                       _showState = val;
-=======
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text("Show chart"),
-                  Switch(value: _showChart, onChanged: (val){
-                    print("switch: ${val}");
-                    setState(() {
-                      _showChart = val;
->>>>>>> 48066d95b93aef17dce7d33b75463dc7a93f81a0
                     });
                   })
                 ],
               ),
-<<<<<<< HEAD
               if(!isLandescape)
                 Container(
                   height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
@@ -151,16 +128,6 @@ class MyAppState extends State<MyApp>{
               child: Chart(transactions),
               ) :
               txWidget
-=======
-              _showChart ? Container(
-                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
-              child: Chart(transactions),
-              ) :
-              Container(
-                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.6,
-              child: Usertransaction(transactions, deleteNewTransaction)
-              )
->>>>>>> 48066d95b93aef17dce7d33b75463dc7a93f81a0
             ],
           ),
         ),
