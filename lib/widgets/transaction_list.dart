@@ -40,17 +40,19 @@ class TransactionList extends StatelessWidget{
             )
 
           );
-    }) : Column(
+    }) : LayoutBuilder(builder: (context, constraints){
+      return Column(
         children: <Widget>[
           Text("No transactions added yet"),
           SizedBox(
             height: 15,
           ),
           Container(
-              height: 300,
+              height: constraints.maxHeight * 0.6,
               child: Image.asset("assets/images/waiting.png")
           )
         ],
-    );
+      );
+    });
   }
 }

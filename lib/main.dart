@@ -50,6 +50,7 @@ class MyApp extends StatefulWidget {
 }
 class MyAppState extends State<MyApp>{
   late MyApp _MyApp;
+  bool _showState = false;
   MyAppState(MyApp app){
     _MyApp = app;
   }
@@ -86,6 +87,7 @@ class MyAppState extends State<MyApp>{
   }
   @override
   Widget build(BuildContext cont) {
+    final bool isLandescape = MediaQuery.of(context).orientation == Orientation.landscape;
     final AppBar appBar = AppBar(
       title: Text("Expense plannar"),
       actions: <Widget>[
@@ -93,19 +95,39 @@ class MyAppState extends State<MyApp>{
       ],
 
     );
+    final Widget txWidget = Container(
+        height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
+        child: Usertransaction(transactions, deleteNewTransaction)
+    );
     return Scaffold(
         appBar: appBar,
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              Container(
-                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.4,
-              child: Chart(transactions),
+              if(isLandescape) Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text("Show chart"),
+                  Switch(value: _showState, onChanged: (val){
+                    setState(() {
+                      _showState = val;
+                    });
+                  })
+                ],
               ),
-              Container(
-                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.6,
-              child: Usertransaction(transactions, deleteNewTransaction)
-              )
+              if(!isLandescape)
+                Container(
+                  height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
+                  child: Chart(transactions),
+                ),
+              if(!isLandescape)
+                txWidget,
+              if(isLandescape)
+                _showState ? Container(
+                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
+              child: Chart(transactions),
+              ) :
+              txWidget
             ],
           ),
         ),
