@@ -13,34 +13,34 @@ class TransactionList extends StatelessWidget{
         itemCount: transactions.length,
         itemBuilder: (ctx, index){
           return Card(elevation: 5,
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 5,
-                vertical: 8
-              ),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    child: FittedBox(
-                      child: Padding(
-                        padding: EdgeInsets.all(10),
-                          child: Text("\$${transactions[index].amount}")),
+              child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 8
+                  ),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      child: FittedBox(
+                        child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Text("\$${transactions[index].amount}")),
+                      ),
                     ),
-                  ),
-                  title: Text("${transactions[index].title}",
-                    style: Theme.of(context).textTheme.titleMedium,),
-                  subtitle: Text(DateFormat.yMMMd().format(transactions[index].date)),
-                  trailing: IconButton(
-                    onPressed: (){
-                      deleteTransaction(transactions[index].id);
-                    },
-                    icon: Icon(Icons.delete),
-                    color: Theme.of(context).errorColor,
-                  ),
-                )
-            )
+                    title: Text("${transactions[index].title}",
+                      style: Theme.of(context).textTheme.titleMedium,),
+                    subtitle: Text(DateFormat.yMMMd().format(transactions[index].date)),
+                    trailing: IconButton(
+                      onPressed: (){
+                        deleteTransaction(transactions[index].id);
+                      },
+                      icon: Icon(Icons.delete),
+                      color: Theme.of(context).errorColor,
+                    ),
+                  )
+              )
 
           );
-    }) : LayoutBuilder(builder: (ctx, constraints){
+        }) : LayoutBuilder(builder: (ctx, constraints){
       return Container(child: Column(
         children: <Widget>[
           Text("No transactions added yet"),
