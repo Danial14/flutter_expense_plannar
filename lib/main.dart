@@ -1,19 +1,15 @@
+import 'dart:io';
+
 import 'package:expense_planner/widgets/New_transaction.dart';
 import 'package:expense_planner/widgets/User_transaction.dart';
 import 'package:expense_planner/widgets/chart.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 
 import 'models/Transaction.dart';
 
 void main() {
-  /*WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations(<DeviceOrientation>[
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-
-  ]);*/
   runApp(MyHomePage());
 }
 
@@ -57,7 +53,7 @@ class MyApp extends StatefulWidget {
 }
 class MyAppState extends State<MyApp>{
   late MyApp _MyApp;
-  bool _showChart = false;
+  bool _showState = false;
   MyAppState(MyApp app){
     _MyApp = app;
   }
@@ -94,42 +90,67 @@ class MyAppState extends State<MyApp>{
   }
   @override
   Widget build(BuildContext cont) {
-    final AppBar appBar = AppBar(
+    final bool isLandescape = MediaQuery.of(context).orientation == Orientation.landscape;
+    //final PreferredSizeWidget appBar =
+
+    final PreferredSizeWidget wid = Platform.isIOS ? CupertinoNavigationBar(
+      middle: Text("Expense plannar"),
+      trailing: Row(
+        children: <Widget>[
+          GestureDetector(onTap: (){
+            startAddNewTransaction(cont);
+          }, child: Icon(CupertinoIcons.add),)
+        ],
+      ),
+    ) : AppBar(
       title: Text("Expense plannar"),
       actions: <Widget>[
-        IconButton(onPressed: (){}, icon: Icon(Icons.add))
+        IconButton(onPressed: (){
+          startAddNewTransaction(cont);
+        }, icon: Icon(Icons.add))
       ],
+    ) as PreferredSizeWidget;
 
+    final Widget txWidget = Container(
+        height: (MediaQuery.of(context).size.height - wid.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
+        child: Usertransaction(transactions, deleteNewTransaction)
     );
-    return Scaffold(
-        appBar: appBar,
-        body: SingleChildScrollView(
-          child: Column(
+
+    final Widget bodyWidget = SafeArea(child: SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          if(isLandescape) Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text("Show chart"),
-                  Switch(value: _showChart, onChanged: (val){
-                    print("switch: ${val}");
-                    setState(() {
-                      _showChart = val;
-                    });
-                  })
-                ],
-              ),
-              _showChart ? Container(
-                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
-              child: Chart(transactions),
-              ) :
-              Container(
-                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.6,
-              child: Usertransaction(transactions, deleteNewTransaction)
-              )
+              Text("Show chart", style: Theme.of(context).textTheme.titleMedium,),
+              Switch.adaptive(value: _showState, onChanged: (val){
+                setState(() {
+                  _showState = val;
+                });
+              })
             ],
           ),
-        ),
-        floatingActionButton: FloatingActionButton(child: Icon(Icons.add), onPressed: (){
+          if(!isLandescape)
+            Container(
+              height: (MediaQuery.of(context).size.height - wid.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
+              child: Chart(transactions),
+            ),
+          if(!isLandescape)
+            txWidget,
+          if(isLandescape)
+            _showState ? Container(
+              height: (MediaQuery.of(context).size.height - wid.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
+              child: Chart(transactions),
+            ) :
+            txWidget
+        ],
+      ),
+    )
+    );
+    return Platform.isIOS ? CupertinoPageScaffold(child: bodyWidget, navigationBar: wid as ObstructingPreferredSizeWidget,) : Scaffold(
+        appBar: wid,
+        body: bodyWidget,
+        floatingActionButton: Platform.isIOS ? Container() :  FloatingActionButton(child: Icon(Icons.add), onPressed: (){
           startAddNewTransaction(cont);
         },),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
