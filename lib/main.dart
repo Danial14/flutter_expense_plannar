@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:expense_planner/widgets/New_transaction.dart';
 import 'package:expense_planner/widgets/User_transaction.dart';
 import 'package:expense_planner/widgets/chart.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 
@@ -85,52 +88,62 @@ class MyAppState extends State<MyApp>{
       );
     });
   }
+  List<Widget> builtLandescapeContent(PreferredSizeWidget appBar, Widget txWidget){
+    return [Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text("Show chart"),
+        Switch.adaptive(value: _showState, onChanged: (val){
+          setState(() {
+            _showState = val;
+          });
+        })
+      ],
+    ),
+      _showState ? Container(
+        height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
+        child: Chart(transactions),
+      ) :
+      txWidget
+    ];
+  }
+  List<Widget> builtPortraitContent(PreferredSizeWidget appBar, Widget txWidget){
+    return [
+      Container(
+        height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
+        child: Chart(transactions),
+      ),
+      txWidget
+    ];
+  }
   @override
   Widget build(BuildContext cont) {
     final bool isLandescape = MediaQuery.of(context).orientation == Orientation.landscape;
-    final AppBar appBar = AppBar(
+    final PreferredSizeWidget appBar = AppBar(
       title: Text("Expense plannar"),
       actions: <Widget>[
         IconButton(onPressed: (){}, icon: Icon(Icons.add))
       ],
-
     );
     final Widget txWidget = Container(
         height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
         child: Usertransaction(transactions, deleteNewTransaction)
     );
-    return Scaffold(
-        appBar: appBar,
-        body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              if(isLandescape) Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text("Show chart"),
-                  Switch(value: _showState, onChanged: (val){
-                    setState(() {
-                      _showState = val;
-                    });
-                  })
-                ],
-              ),
-              if(!isLandescape)
-                Container(
-                  height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
-                  child: Chart(transactions),
-                ),
-              if(!isLandescape)
-                txWidget,
-              if(isLandescape)
-                _showState ? Container(
-                height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
-              child: Chart(transactions),
-              ) :
-              txWidget
-            ],
-          ),
-        ),
+    final Widget content = SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          if(isLandescape)
+            ...builtLandescapeContent(appBar, txWidget)
+          ,
+          if(!isLandescape)
+            ...builtPortraitContent(appBar, txWidget)
+        ],
+      ),
+    );
+
+    return Platform.isIOS? CupertinoPageScaffold(child: content) : Scaffold(
+        appBar: Platform.isIOS ? CupertinoNavigationBar() : appBar,
+        body: content,
         floatingActionButton: FloatingActionButton(child: Icon(Icons.add), onPressed: (){
           startAddNewTransaction(cont);
         },),
