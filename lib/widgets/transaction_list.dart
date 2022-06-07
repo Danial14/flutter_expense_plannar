@@ -1,3 +1,4 @@
+import 'package:expense_planner/widgets/transaction_iteM.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../models/Transaction.dart';
@@ -11,36 +12,10 @@ class TransactionList extends StatelessWidget{
   Widget build(BuildContext context) {
     return transactions.length > 0 ? ListView.builder(
         itemCount: transactions.length,
-        itemBuilder: (ctx, index){
-          return Card(elevation: 5,
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 5,
-                vertical: 8
-              ),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    child: FittedBox(
-                      child: Padding(
-                        padding: EdgeInsets.all(10),
-                          child: Text("\$${transactions[index].amount}")),
-                    ),
-                  ),
-                  title: Text("${transactions[index].title}",
-                    style: Theme.of(context).textTheme.titleMedium,),
-                  subtitle: Text(DateFormat.yMMMd().format(transactions[index].date)),
-                  trailing: IconButton(
-                    onPressed: (){
-                      deleteTransaction(transactions[index].id);
-                    },
-                    icon: Icon(Icons.delete),
-                    color: Theme.of(context).errorColor,
-                  ),
-                )
-            )
+        itemBuilder: (ctx, ind){
+          return TransactionIteM(transactions: transactions, deleteTransaction: deleteTransaction, index: ind,);
 
-          );
-    }) : LayoutBuilder(builder: (context, constraints){
+        }) : LayoutBuilder(builder: (context, constraints){
       return Column(
         children: <Widget>[
           Text("No transactions added yet"),

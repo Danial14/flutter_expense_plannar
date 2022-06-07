@@ -19,18 +19,18 @@ class MyHomePage extends StatelessWidget{
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.green,
-        accentColor: Colors.purple,
-        appBarTheme: AppBarTheme(
-          titleTextStyle: TextStyle(
-            fontFamily: "Quicksand",
-            fontSize: 20
-          )
-        ),
-        textTheme: ThemeData.light().textTheme.copyWith(displayLarge: TextStyle(
-          fontFamily: "OpenSans",
-          fontWeight: FontWeight.bold
-        ))
+          primarySwatch: Colors.green,
+          accentColor: Colors.purple,
+          appBarTheme: AppBarTheme(
+              titleTextStyle: TextStyle(
+                  fontFamily: "Quicksand",
+                  fontSize: 20
+              )
+          ),
+          textTheme: ThemeData.light().textTheme.copyWith(displayLarge: TextStyle(
+              fontFamily: "OpenSans",
+              fontWeight: FontWeight.bold
+          ))
       ),
       home: MyApp(),
     );
@@ -79,6 +79,35 @@ class MyAppState extends State<MyApp>{
     });
 
   }
+  List<Widget> createLandescapeContent(PreferredSizeWidget wid, Widget txWidget){
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text("Show chart", style: Theme.of(context).textTheme.titleMedium,),
+          Switch.adaptive(value: _showState, onChanged: (val){
+            setState(() {
+              _showState = val;
+            });
+          })
+        ],
+      ),
+      _showState ? Container(
+        height: (MediaQuery.of(context).size.height - wid.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
+        child: Chart(transactions),
+      ) :
+      txWidget
+    ];
+  }
+  List<Widget> createPortraitContent(PreferredSizeWidget wid, Widget txWidget){
+    return [
+      Container(
+        height: (MediaQuery.of(context).size.height - wid.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
+        child: Chart(transactions),
+      ),
+      txWidget
+    ];
+  }
   void startAddNewTransaction(BuildContext ctx){
     showModalBottomSheet(context: ctx, builder: (_){
       return GestureDetector(
@@ -88,66 +117,54 @@ class MyAppState extends State<MyApp>{
       );
     });
   }
-  List<Widget> builtLandescapeContent(PreferredSizeWidget appBar, Widget txWidget){
-    return [Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text("Show chart"),
-        Switch.adaptive(value: _showState, onChanged: (val){
-          setState(() {
-            _showState = val;
-          });
-        })
-      ],
-    ),
-      _showState ? Container(
-        height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
-        child: Chart(transactions),
-      ) :
-      txWidget
-    ];
-  }
-  List<Widget> builtPortraitContent(PreferredSizeWidget appBar, Widget txWidget){
-    return [
-      Container(
-        height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
-        child: Chart(transactions),
-      ),
-      txWidget
-    ];
-  }
   @override
   Widget build(BuildContext cont) {
     final bool isLandescape = MediaQuery.of(context).orientation == Orientation.landscape;
-    final PreferredSizeWidget appBar = AppBar(
+    //final PreferredSizeWidget appBar =
+
+    final PreferredSizeWidget wid = Platform.isIOS ? CupertinoNavigationBar(
+      middle: Text("Expense plannar"),
+      trailing: Row(
+        children: <Widget>[
+          GestureDetector(onTap: (){
+            startAddNewTransaction(cont);
+          }, child: Icon(CupertinoIcons.add),)
+        ],
+      ),
+    ) : AppBar(
       title: Text("Expense plannar"),
       actions: <Widget>[
-        IconButton(onPressed: (){}, icon: Icon(Icons.add))
+        IconButton(onPressed: (){
+          startAddNewTransaction(cont);
+        }, icon: Icon(Icons.add))
       ],
-    );
+    ) as PreferredSizeWidget;
+
     final Widget txWidget = Container(
-        height: (MediaQuery.of(context).size.height - appBar.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
+        height: (MediaQuery.of(context).size.height - wid.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
         child: Usertransaction(transactions, deleteNewTransaction)
     );
-    final Widget content = SingleChildScrollView(
+
+    final Widget bodyWidget = SafeArea(child: SingleChildScrollView(
       child: Column(
         children: <Widget>[
           if(isLandescape)
-            ...builtLandescapeContent(appBar, txWidget)
-          ,
+            ...createLandescapeContent(wid, txWidget)
+            ,
           if(!isLandescape)
-            ...builtPortraitContent(appBar, txWidget)
+            ...createPortraitContent(wid, txWidget)
+          ,
         ],
       ),
+    )
     );
-
-    return Platform.isIOS? CupertinoPageScaffold(child: content) : Scaffold(
-        appBar: Platform.isIOS ? CupertinoNavigationBar() : appBar,
-        body: content,
-        floatingActionButton: FloatingActionButton(child: Icon(Icons.add), onPressed: (){
-          startAddNewTransaction(cont);
-        },),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      );
+    return Platform.isIOS ? CupertinoPageScaffold(child: bodyWidget, navigationBar: wid as ObstructingPreferredSizeWidget,) : Scaffold(
+      appBar: wid,
+      body: bodyWidget,
+      floatingActionButton: Platform.isIOS ? Container() :  FloatingActionButton(child: Icon(Icons.add), onPressed: (){
+        startAddNewTransaction(cont);
+      },),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
   }
 }

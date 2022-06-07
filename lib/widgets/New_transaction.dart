@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:expense_planner/main.dart';
+import 'package:expense_planner/widgets/adaptive_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -21,6 +24,7 @@ class NewTransactionState extends State<NewTransaction>{
   final titleController = TextEditingController();
   final aMountController = TextEditingController();
   DateTime? dateTime = null;
+  late VoidCallback showDate;
   late MyApp _MyApp;
   NewTransactionState(MyApp app){
     this._MyApp = app;
@@ -35,11 +39,23 @@ class NewTransactionState extends State<NewTransaction>{
   }
   @override
   Widget build(BuildContext context) {
+    showDate = (){
+      showDatePicker(context: context, initialDate: DateTime.now(),
+          firstDate: DateTime(2019), lastDate: DateTime.now()).
+      then((pickedDate){
+        if(pickedDate == null){
+          return;
+        }
+        setState(() {
+          dateTime = pickedDate;
+        });
+      });
+    };
     return
-      Card(
+      SingleChildScrollView(child: Card(
           elevation: 5,
           child: Container(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.only(top: 10, right: 10, left: 10, bottom: MediaQuery.of(context).viewInsets.bottom + 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
@@ -68,23 +84,7 @@ class NewTransactionState extends State<NewTransaction>{
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Text(dateTime == null ? "No date chosen" : DateFormat.yMd().format(dateTime!)),
-                    FlatButton(onPressed: (){
-                      showDatePicker(context: context, initialDate: DateTime.now(),
-                          firstDate: DateTime(2019), lastDate: DateTime.now()).
-                      then((pickedDate){
-                        if(pickedDate == null){
-                          return;
-                        }
-                        setState(() {
-                          dateTime = pickedDate;
-                        });
-                      });
-
-                    }, child: Text("Choose date",
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor
-                      ),
-                    ))
+                    AdaptiveButton("Choose date", showDate)
                   ],
                 )
                 ),
@@ -99,6 +99,7 @@ class NewTransactionState extends State<NewTransaction>{
               ],
             ),
           )
+      )
       );
 
   }
