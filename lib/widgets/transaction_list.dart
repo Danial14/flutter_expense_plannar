@@ -10,12 +10,10 @@ class TransactionList extends StatelessWidget{
   TransactionList({required this.transactions, required this.deleteTransaction});
   @override
   Widget build(BuildContext context) {
-    return transactions.length > 0 ? ListView.builder(
-        itemCount: transactions.length,
-        itemBuilder: (ctx, ind){
-          return TransactionIteM(transactions: transactions, deleteTransaction: deleteTransaction, index: ind,);
-
-        }) : LayoutBuilder(builder: (context, constraints){
+    return transactions.length > 0 ? ListView(
+      children: transactions.map((transaction) => TransactionIteM(key: ValueKey(transaction.id) ,transactions: transactions, deleteTransaction: deleteTransaction, index: transactions.indexOf(transaction),)).
+      toList(),
+    ) : LayoutBuilder(builder: (context, constraints){
       return Column(
         children: <Widget>[
           Text("No transactions added yet"),

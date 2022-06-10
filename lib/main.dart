@@ -88,6 +88,36 @@ class MyAppState extends State<MyApp>{
       );
     });
   }
+  List<Widget> createLandescapeContent(PreferredSizeWidget wid, Widget txWidget){
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text("Show chart", style: Theme.of(context).textTheme.titleMedium,),
+          Switch.adaptive(value: _showState, onChanged: (val){
+            setState(() {
+              _showState = val;
+            });
+          })
+        ],
+      ),
+      _showState ? Container(
+        height: (MediaQuery.of(context).size.height - wid.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
+        child: Chart(transactions),
+      ) :
+      txWidget
+    ];
+  }
+  List<Widget> createPortraitContent(PreferredSizeWidget wid, Widget txWidget){
+    return [
+      Container(
+        height: (MediaQuery.of(context).size.height - wid.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
+        child: Chart(transactions),
+      ),
+      txWidget
+    ]
+    ;
+  }
   @override
   Widget build(BuildContext cont) {
     final bool isLandescape = MediaQuery.of(context).orientation == Orientation.landscape;
@@ -119,30 +149,12 @@ class MyAppState extends State<MyApp>{
     final Widget bodyWidget = SafeArea(child: SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          if(isLandescape) Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text("Show chart", style: Theme.of(context).textTheme.titleMedium,),
-              Switch.adaptive(value: _showState, onChanged: (val){
-                setState(() {
-                  _showState = val;
-                });
-              })
-            ],
-          ),
-          if(!isLandescape)
-            Container(
-              height: (MediaQuery.of(context).size.height - wid.preferredSize.height - MediaQuery.of(context).padding.top) * 0.3,
-              child: Chart(transactions),
-            ),
-          if(!isLandescape)
-            txWidget,
           if(isLandescape)
-            _showState ? Container(
-              height: (MediaQuery.of(context).size.height - wid.preferredSize.height - MediaQuery.of(context).padding.top) * 0.7,
-              child: Chart(transactions),
-            ) :
-            txWidget
+            ...createLandescapeContent(wid, txWidget)
+          ,
+          if(!isLandescape)
+            ...createPortraitContent(wid, txWidget)
+
         ],
       ),
     )
