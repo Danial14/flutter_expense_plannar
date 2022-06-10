@@ -19,18 +19,18 @@ class MyHomePage extends StatelessWidget{
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.green,
-        accentColor: Colors.purple,
-        appBarTheme: AppBarTheme(
-          titleTextStyle: TextStyle(
-            fontFamily: "Quicksand",
-            fontSize: 20
-          )
-        ),
-        textTheme: ThemeData.light().textTheme.copyWith(displayLarge: TextStyle(
-          fontFamily: "OpenSans",
-          fontWeight: FontWeight.bold
-        ))
+          primarySwatch: Colors.green,
+          accentColor: Colors.purple,
+          appBarTheme: AppBarTheme(
+              titleTextStyle: TextStyle(
+                  fontFamily: "Quicksand",
+                  fontSize: 20
+              )
+          ),
+          textTheme: ThemeData.light().textTheme.copyWith(displayLarge: TextStyle(
+              fontFamily: "OpenSans",
+              fontWeight: FontWeight.bold
+          ))
       ),
       home: MyApp(),
     );
@@ -79,15 +79,6 @@ class MyAppState extends State<MyApp>{
     });
 
   }
-  void startAddNewTransaction(BuildContext ctx){
-    showModalBottomSheet(context: ctx, builder: (_){
-      return GestureDetector(
-        onTap: (){},
-        child: NewTransaction(myApp: _MyApp,),
-        behavior: HitTestBehavior.opaque,
-      );
-    });
-  }
   List<Widget> createLandescapeContent(PreferredSizeWidget wid, Widget txWidget){
     return [
       Row(
@@ -115,8 +106,16 @@ class MyAppState extends State<MyApp>{
         child: Chart(transactions),
       ),
       txWidget
-    ]
-    ;
+    ];
+  }
+  void startAddNewTransaction(BuildContext ctx){
+    showModalBottomSheet(context: ctx, builder: (_){
+      return GestureDetector(
+        onTap: (){},
+        child: NewTransaction(myApp: _MyApp,),
+        behavior: HitTestBehavior.opaque,
+      );
+    });
   }
   @override
   Widget build(BuildContext cont) {
@@ -154,18 +153,18 @@ class MyAppState extends State<MyApp>{
           ,
           if(!isLandescape)
             ...createPortraitContent(wid, txWidget)
-
+            ,
         ],
       ),
     )
     );
     return Platform.isIOS ? CupertinoPageScaffold(child: bodyWidget, navigationBar: wid as ObstructingPreferredSizeWidget,) : Scaffold(
-        appBar: wid,
-        body: bodyWidget,
-        floatingActionButton: Platform.isIOS ? Container() :  FloatingActionButton(child: Icon(Icons.add), onPressed: (){
-          startAddNewTransaction(cont);
-        },),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      );
+      appBar: wid,
+      body: bodyWidget,
+      floatingActionButton: Platform.isIOS ? Container() :  FloatingActionButton(child: Icon(Icons.add), onPressed: (){
+        startAddNewTransaction(cont);
+      },),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
   }
 }
